@@ -72,6 +72,8 @@ ezTTSPrivate::ezTTSPrivate() {
         printf("%s(%d):Could not init voice!\n",
                __FILE__, __LINE__);
     }
+    mEngin->SetInterest(SPFEI_ALL_TTS_EVENTS, SPFEI_ALL_TTS_EVENTS);
+    mEngin->SetNotifyCallbackInterface(this, 0, 0);
     updateVoices();
     mState = ezTTS::Ready;
 }
@@ -386,6 +388,17 @@ ezTTSPrivate::getVoiceAttrs(
 const std::list<ezTTSVoice> &
 ezTTSPrivate::availableVoices() {
     return mVoices;
+}
+
+HRESULT ezTTSPrivate::NotifyCallback(WPARAM, LPARAM) {
+    if (mPauseCount) {
+        mState = ezTTS::Paused;
+    } else if (isSpeaking()) {
+        mState = ezTTS::Speaking;
+    } else {
+        mState = ezTTS::Ready;
+    }
+    return S_OK;
 }
 
 #endif // _WIN32

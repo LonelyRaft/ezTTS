@@ -10,7 +10,7 @@
 #include "../eztts.h"
 #include "../eztts_voice.h"
 
-class ezTTSPrivate {
+class ezTTSPrivate : public ISpNotifyCallback {
     bool mSync;
     ISpVoice *mEngin;
     double mPitch;
@@ -24,6 +24,8 @@ class ezTTSPrivate {
     getVoiceAttrs(ISpObjectToken *);
 
     bool isSpeaking() const;
+
+    HRESULT STDMETHODCALLTYPE NotifyCallback(WPARAM, LPARAM);
 
 public:
     ezTTSPrivate();
